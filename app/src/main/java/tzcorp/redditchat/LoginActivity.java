@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -29,10 +30,27 @@ import com.google.firebase.auth.GoogleAuthProvider;
  */
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
+    private static final String AUTH_URL =
+            "https://www.reddit.com/api/v1/authorize.compact?client_id=%s" +
+                    "&response_type=code&state=%s&redirect_uri=%s&" +
+                    "duration=permanent&scope=identity";
+
+    private static final String CLIENT_ID = "adjzxa_AatUq6A";
+
+    private static final String REDIRECT_URI =
+            "http://www.example.com/my_redirect";
+
+    private static final String STATE = "MY_RANDOM_STRING_1";
+
+    private static final String ACCESS_TOKEN_URL =
+            "https://www.reddit.com/api/v1/access_token";
+
     private SignInButton googleSignIn;
     private GoogleApiClient mGoogleApiClient;
     private static final String TAG = "LoginActivity";
     private static final int RC_GOOGLE_SIGN_IN = 9001;
+
+    private Button redditSignIn;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -42,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         googleSignIn = (SignInButton) findViewById(R.id.google_sign_in_button);
+        redditSignIn = (Button) findViewById(R.id.redditSignin);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -64,6 +83,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onClick(View v) {
                 signInUsingGoogle();
+            }
+        });
+        redditSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Reddit Sign In");
             }
         });
 

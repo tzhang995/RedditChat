@@ -7,13 +7,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
-        android:id="@+id/photoImageView"
+        android:id="@+id/itemPhotoImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true" />
 
     <TextView
-        android:id="@+id/messageTextView"
+        android:id="@+id/itemMessageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
@@ -21,7 +21,7 @@
         tools:text="Message" />
 
     <TextView
-        android:id="@+id/nameTextView"
+        android:id="@+id/itemNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
