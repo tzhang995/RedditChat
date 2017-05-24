@@ -140,6 +140,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
+                            Log.d(TAG,FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.

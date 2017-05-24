@@ -8,8 +8,25 @@
     tools:context="tzcorp.redditchat.ChatActivity"
     android:id="@+id/chat_drawer_layout"
     >
-    <include layout="@layout/main_chat_frame"
-        android:id="@+id/content_frame"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/content_frame"/>
+    </LinearLayout>
     <!-- The navigation drawer -->
     <ListView
         android:id="@+id/left_drawer"
