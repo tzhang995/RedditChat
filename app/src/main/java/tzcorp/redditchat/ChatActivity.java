@@ -37,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
     private String[] mDrawerItemTitles;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+    private ChatFragment chatFragment;
 
     //Anything here for firebase is auth related
     private FirebaseAuth mFirebaseAuth;
@@ -88,10 +89,10 @@ public class ChatActivity extends AppCompatActivity {
             selectItem(0);
         }
 
-        Fragment fragment = new ChatFragment();
+        chatFragment = new ChatFragment();
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.content_frame, fragment).commit();
+        fragmentManager.beginTransaction().add(R.id.content_frame, chatFragment).commit();
 
 
         //Firebase stuff
@@ -100,15 +101,16 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                Log.d(TAG, "OnAuthStateChanged");
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.d(TAG, "Logged in");
-                } else {
-                    Log.d(TAG, "Not Logged in");
-                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivityForResult(loginIntent,REQUEST_CODE_SIGN_IN);
-                }
+            Log.d(TAG, "OnAuthStateChanged");
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                chatFragment.setUsername(user.getDisplayName());
+                Log.d(TAG, "Logged in");
+            } else {
+                Log.d(TAG, "Not Logged in");
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivityForResult(loginIntent,REQUEST_CODE_SIGN_IN);
+            }
             }
         };
 
@@ -124,8 +126,10 @@ public class ChatActivity extends AppCompatActivity {
 
     private void selectItem(int position) {
         // update the main content by replacing fragments
-        Log.d(TAG, "SignOut Activated");
-        FirebaseAuth.getInstance().signOut();
+        if (position == 1) {
+            Log.d(TAG, "SignOut Activated");
+            FirebaseAuth.getInstance().signOut();
+        }
     }
 
     @Override

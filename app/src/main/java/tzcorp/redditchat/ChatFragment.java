@@ -89,39 +89,14 @@ public class ChatFragment extends Fragment {
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
         mChatPhotosStorageReference = mFirebaseStorage.getReference().child("chat_photos");
-
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                Log.d(TAG, "OnAuthStateChanged");
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.d(TAG, "Logged in");
-                    onSignedInInitialize(user.getDisplayName());
-                } else {
-                    Log.d(TAG, "Not Logged in");
-                    signoutCleanUp();
-                }
-            }
-        };
     }
-
-
-    private void onSignedInInitialize(String username) {
-        attachDatabaseReadListener();
-    }
-
-    private void signoutCleanUp() {
-        detachDatabaseReadListener();
-    }
-
 
     private void attachDatabaseReadListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Log.d(TAG, "New Message received");
                     BasicMessage basicMessage = dataSnapshot.getValue(BasicMessage.class);
                     mMessageAdapter.add(basicMessage);
                 }
@@ -140,6 +115,10 @@ public class ChatFragment extends Fragment {
             mMessagesDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
+    }
+
+    public void setUsername(@NonNull final String username) {
+        mUsername = username;
     }
 
     private void addPageListeners() {
@@ -170,11 +149,21 @@ public class ChatFragment extends Fragment {
             public void onClick(View view) {
                 BasicMessage basicMessage = new BasicMessage(mMessageEditText.getText().toString(), mUsername, null);
                 mMessagesDatabaseReference.push().setValue(basicMessage);
-
                 // Clear input box
                 mMessageEditText.setText("");
             }
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        detachDatabaseReadListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        attachDatabaseReadListener();
+    }
 }
