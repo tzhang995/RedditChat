@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "684785291259",
+    "project_id": "redditchat-166723"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684785291259:android:f2e886b1b89ef301",
+        "android_client_info": {
+          "package_name": "tzcorp.redditchat.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "684785291259-r1k1odm5bkve22mgufg2h6l4fcn69ugf.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "684785291259-5491ts5dqn7en26gh3afr561529a37cf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tzcorp.redditchat.debug",
+            "certificate_hash": "db62afe6a25517264d727c2fcd1478eddebe898c"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCokSZlX81V-9PYXTYF7yGVebkeGPp7XeI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
