@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "371389028658",
+    "firebase_url": "https://redditchat-66770.firebaseio.com",
+    "project_id": "redditchat-66770",
+    "storage_bucket": "redditchat-66770.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371389028658:android:1ff680e90ef3151f",
+        "android_client_info": {
+          "package_name": "tzcorp.redditchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371389028658-pqpe3qb89l0km0ljne8649inouqko91j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tzcorp.redditchat",
+            "certificate_hash": "db62afe6a25517264d727c2fcd1478eddebe898c"
+          }
+        },
+        {
+          "client_id": "371389028658-vad2de9blrks59p17s1h9s82ngqrgqb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE9sFjJ40CvFnX7EBwFv6cA2wNwf1RSbM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371389028658-vad2de9blrks59p17s1h9s82ngqrgqb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

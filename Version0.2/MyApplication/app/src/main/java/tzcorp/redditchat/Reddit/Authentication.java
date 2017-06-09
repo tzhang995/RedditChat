@@ -1,5 +1,6 @@
 package tzcorp.redditchat.Reddit;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,8 +15,10 @@ import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthException;
 import net.dean.jraw.http.oauth.OAuthHelper;
 
+import tzcorp.redditchat.Activities.LoginActivity;
 import tzcorp.redditchat.R;
 import tzcorp.redditchat.Util.LogUtil;
+import tzcorp.redditchat.Util.NetworkUtil;
 
 /**
  * Created by tony on 05/06/17.
@@ -25,25 +28,57 @@ public class Authentication {
     public static final String CLIENT_ID    = "adjzxa_AatUq6A";
     public static final String REDIRECT_URL = "http://www.example.com/my_redirect";
 
-    public static RedditClient reddit;
+    private static RedditClient reddit;
+
+    private static int loginStatus;
+    public static int LOGGEDOUT = 0;
+    public static int LOGGEDIN = 1;
+    public static int CONNECTING = 2;
+
+    private static Authentication instance;
 
     //This is where I will keep the refreshToken using lastToken as the id name
-    public static SharedPreferences authentication;
+    private SharedPreferences authentication;
+    public static Authentication getInstance(Context context) {
+        if (instance == null) {
+            instance = new Authentication(context);
+        }
+        return instance;
+    }
 
-    public static RedditClient getRedditClient() {
+    private Authentication(Context context) {
         if (reddit == null) {
             reddit = new RedditClient(UserAgent.of("RedditChat"));
             reddit.setLoggingMode(LoggingMode.ALWAYS);
         }
+    }
+
+    public SharedPreferences getSharePref(Context context) {
+        if (authentication == null) {
+            authentication = context.getSharedPreferences(context.getString(R.string.shared_preferences_key),Context.MODE_PRIVATE);
+        }
+        return authentication;
+    }
+
+    public RedditClient getRedditClient() {
         return reddit;
     }
 
     @Nullable
-    public static String getRefreshToken(Context context) {
-        return authentication.getString(context.getString(R.string.refresh_token), null);
+    public String getRefreshToken(Context context) {
+        SharedPreferences auth = getSharePref(context);
+        return auth.getString(context.getString(R.string.reddit_refresh_token), null);
     }
 
-    public static final class TokenRefreshTask extends AsyncTask<String, Void, OAuthData> {
+    public void startExistingLogin(Context context){
+        if (NetworkUtil.isConnected(context)) {
+            new TokenRefreshTask(context).execute();
+        } else {
+            //TODO
+        }
+    }
+
+    private final class TokenRefreshTask extends AsyncTask<String, Void, OAuthData> {
         private Context mContext;
 
         public TokenRefreshTask(Context context) {
@@ -55,7 +90,7 @@ public class Authentication {
             final Credentials credentials = Credentials.installedApp(Authentication.CLIENT_ID, Authentication.REDIRECT_URL);
             OAuthHelper oAuthHelper = reddit.getOAuthHelper();
             String refresh_token = getRefreshToken(mContext);
-
+            loginStatus = CONNECTING;
             oAuthHelper.setRefreshToken(refresh_token);
 
             try {
@@ -74,15 +109,36 @@ public class Authentication {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(OAuthData oAuthData) {
+            if(getRedditClient().isAuthenticated()) {
+                loginStatus = LOGGEDIN;
+                if(mContext instanceof LoginActivity) {
+                    LoginActivity mc = (LoginActivity) mContext;
+                    mc.signinSuccessful();
+                }
+            } else {
+                loginStatus = LOGGEDOUT;
+            }
+        }
+    }
+
+    public void startNewLogin(LoginActivity context, OAuthHelper oAuthHelper, Credentials credentials, String URL) {
+        if (NetworkUtil.isConnected(context)) {
+            new UserChallengeTask(context, oAuthHelper, credentials).execute(URL);
+        } else {
+            //TODO
+        }
     }
 
 
-    public static final class UserChallengeTask extends AsyncTask<String, Void, OAuthData> {
+    private final class UserChallengeTask extends AsyncTask<String, Void, OAuthData> {
         private OAuthHelper mOAuthHelper;
         private Credentials mCredentials;
-        private Context mContext;
+        private LoginActivity mContext;
 
-        public UserChallengeTask(Context context, OAuthHelper oAuthHelper, Credentials credentials) {
+        public UserChallengeTask(LoginActivity context, OAuthHelper oAuthHelper, Credentials credentials) {
             mContext = context;
             mOAuthHelper = oAuthHelper;
             mCredentials = credentials;
@@ -90,6 +146,7 @@ public class Authentication {
 
         @Override
         protected OAuthData doInBackground(String... params) {
+            loginStatus = CONNECTING;
             LogUtil.d("params[0]: " + params[0]);
             try {
                 OAuthData oAuthData = mOAuthHelper.onUserChallenge(params[0], mCredentials);
@@ -112,17 +169,33 @@ public class Authentication {
             LogUtil.d("onPostExecute()");
 
             if (oAuthData != null) {
+                loginStatus = LOGGEDIN;
                 RedditClient rc = getRedditClient();
 
                 String refreshToken = rc.getOAuthData().getRefreshToken();
                 SharedPreferences.Editor editor = authentication.edit();
-                editor.putString(mContext.getString(R.string.refresh_token),refreshToken);
+                editor.putString(mContext.getString(R.string.reddit_refresh_token),refreshToken);
                 editor.commit();
                 LogUtil.d("Refresh Token: " + refreshToken);
                 LogUtil.d("Username: " + rc.getAuthenticatedUser());
+                mContext.signinSuccessful();
+
             } else {
+                loginStatus = LOGGEDOUT;
                 LogUtil.d("OAuthData was null");
+                mContext.signinFailed();
             }
         }
+    }
+
+    public int getLoginStatus() {
+        return loginStatus;
+    }
+
+    public void signOut(Context context) {
+        authentication.edit().putString(context.getString(R.string.reddit_access_token), null);
+        authentication.edit().putString(context.getString(R.string.reddit_refresh_token), null);
+        authentication.edit().commit();
+        loginStatus = LOGGEDOUT;
     }
 }
