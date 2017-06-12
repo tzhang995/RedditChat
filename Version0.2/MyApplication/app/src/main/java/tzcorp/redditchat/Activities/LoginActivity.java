@@ -80,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+        webView.getSettings().setDomStorageEnabled(true);
     }
 
     public void signinSuccessful() {

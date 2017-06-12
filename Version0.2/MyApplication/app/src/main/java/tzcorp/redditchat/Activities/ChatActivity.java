@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,16 +34,15 @@ import tzcorp.redditchat.Util.LogUtil;
  * Created by tony on 05/06/17.
  */
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements Authentication.RedditAuthInterface {
     public static final int REQUEST_CODE_SIGN_IN = 8001;
 
     private Authentication redditAuth = Authentication.getInstance(this);
 
     //Layout stuff
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
-    private String[] mDrawerItemTitles;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ChatFragment chatFragment;
@@ -56,13 +57,9 @@ public class ChatActivity extends AppCompatActivity {
 
 
         mTitle = mDrawerTitle = getTitle();
-        mDrawerItemTitles = getResources().getStringArray(R.array.drawer_items);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.chat_drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
 
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mDrawerItemTitles));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -86,10 +83,22 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-
-        if (savedInstanceState == null) {
-            selectItem(0);
-        }
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.navigation_signin:
+                        Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                        startActivityForResult(intent,REQUEST_CODE_SIGN_IN);
+                        break;
+                    case R.id.navigation_signout:
+                        redditAuth.signOut(getApplicationContext());
+                        break;
+                }
+                mDrawerLayout.closeDrawers();
+                return false;
+            }
+        });
 
         chatFragment = new ChatFragment();
 
@@ -99,36 +108,11 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    /* The click listner for ListView in the navigation drawer */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
-    private void selectItem(int position) {
-        // update the main content by replacing fragments
-        switch (position) {
-            case 1:
-                LogUtil.d("Reddit Login");
-                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivityForResult(loginIntent,REQUEST_CODE_SIGN_IN);
-                break;
-            case 2:
-                LogUtil.d("SignOut Activated");
-                FirebaseAuth.getInstance().signOut();
-                redditAuth.signOut(this);
-        }
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 LogUtil.d("Logged in");
-
             }
         }
     }
@@ -136,11 +120,33 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        redditAuth.addAuthListener(this);
         if (redditAuth.getLoginStatus() == Authentication.LOGGEDOUT) {
             if (redditAuth.getRefreshToken(this) != null) {
                 redditAuth.startExistingLogin(this);
             }
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.signin_menu);
+        } else if (redditAuth.getLoginStatus() == Authentication.LOGGEDIN) {
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.signout_menu);
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        redditAuth.removeAuthListener(this);
+    }
+
+    @Override
+    public void authChanged() {
+        if (redditAuth.getLoginStatus() == Authentication.LOGGEDOUT) {
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.signin_menu);
+        } else if (redditAuth.getLoginStatus() == Authentication.LOGGEDIN) {
+            mNavigationView.getMenu().clear();
+            mNavigationView.inflateMenu(R.menu.signout_menu);
         }
     }
 }

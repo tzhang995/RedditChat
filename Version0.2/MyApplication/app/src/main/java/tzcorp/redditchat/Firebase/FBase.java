@@ -38,7 +38,7 @@ public class FBase {
 
     private FBase(){
         db = FirebaseDatabase.getInstance();
-        reference = FirebaseDatabase.getInstance().getReference().child("messages");
+        reference = FirebaseDatabase.getInstance().getReference().child("Robots");
         storage = FirebaseStorage.getInstance();
         listeners = new ArrayList<>();
         childListener = new ChildEventListener() {

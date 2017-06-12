@@ -16,4 +16,19 @@
     <string name="reddit_access_token">RedditAccessToken</string>
     <string name="reddit_refresh_token">RedditRefreshToken</string>
     <string name="sharedPreferences">SharedPreferences</string>
+
+    <!--Navigation-->
+    <string name="navigation_signin">Sign In</string>
+    <string name="navigation_signout">Sign Out</string>
+    <string name="navigation_about">About</string>
+    <string name="navigation_title_subreddits">Subreddits</string>
+    <string name="navigation_settings">Settings</string>
+
+    <!--Default Subreddits-->
+    <string name="subreddit_all">All</string>
+    <string name="subreddit_popular">Popular</string>
+    <string name="subreddit_uwaterloo">UWaterloo</string>
+    <string name="subreddit_uoft">UofT</string>
+    <string name="subreddit_schoolidolfestval">SchoolIdolFestival</string>
+
 </resources>

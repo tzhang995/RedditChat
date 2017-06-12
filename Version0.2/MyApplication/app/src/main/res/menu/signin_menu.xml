@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_features"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_signin"
+            android:title="@string/navigation_signin" />
+        <item
+            android:id="@+id/navigation_settings"
+            android:title="@string/navigation_settings" />
+        <item
+            android:id="@+id/navigation_about"
+            android:title="@string/navigation_about" />
+    </group>
+    <group android:id="@+id/group_subreddits"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_subreddt_all"
+            android:title="@string/subreddit_all" />
+        <item
+            android:id="@+id/navigation_subreddit_uwaterloo"
+            android:title="@string/subreddit_uwaterloo" />
+        <item
+            android:id="@+id/navigation_subreddit_schoolidolfestval"
+            android:title="@string/subreddit_schoolidolfestval" />
+    </group>
+</menu>

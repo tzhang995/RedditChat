@@ -35,7 +35,7 @@ import tzcorp.redditchat.Util.LogUtil;
 public class ChatFragment extends Fragment implements FBase.FBaseListener{
     public static final String TAG = "Chat_Fragment";
     public static final String ANONYMOUS = "anonymous";
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = 145;
 
     private Authentication redditAuth = Authentication.getInstance(this.getActivity());
 

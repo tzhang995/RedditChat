@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import net.dean.jraw.RedditClient;
@@ -14,6 +15,8 @@ import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthException;
 import net.dean.jraw.http.oauth.OAuthHelper;
+
+import java.util.ArrayList;
 
 import tzcorp.redditchat.Activities.LoginActivity;
 import tzcorp.redditchat.R;
@@ -28,7 +31,7 @@ public class Authentication {
     public static final String CLIENT_ID    = "adjzxa_AatUq6A";
     public static final String REDIRECT_URL = "http://www.example.com/my_redirect";
 
-    private static RedditClient reddit;
+    private RedditClient reddit;
 
     private static int loginStatus;
     public static int LOGGEDOUT = 0;
@@ -36,6 +39,7 @@ public class Authentication {
     public static int CONNECTING = 2;
 
     private static Authentication instance;
+    private ArrayList<RedditAuthInterface> authListener;
 
     //This is where I will keep the refreshToken using lastToken as the id name
     private SharedPreferences authentication;
@@ -46,11 +50,13 @@ public class Authentication {
         return instance;
     }
 
+
     private Authentication(Context context) {
         if (reddit == null) {
             reddit = new RedditClient(UserAgent.of("RedditChat"));
             reddit.setLoggingMode(LoggingMode.ALWAYS);
         }
+        authListener = new ArrayList<>();
     }
 
     public SharedPreferences getSharePref(Context context) {
@@ -66,8 +72,7 @@ public class Authentication {
 
     @Nullable
     public String getRefreshToken(Context context) {
-        SharedPreferences auth = getSharePref(context);
-        return auth.getString(context.getString(R.string.reddit_refresh_token), null);
+        return getSharePref(context).getString(context.getString(R.string.reddit_refresh_token), null);
     }
 
     public void startExistingLogin(Context context){
@@ -83,6 +88,7 @@ public class Authentication {
 
         public TokenRefreshTask(Context context) {
             mContext = context;
+            LogUtil.d("Starting TokenRefreshTask");
         }
 
         @Override
@@ -114,6 +120,9 @@ public class Authentication {
         protected void onPostExecute(OAuthData oAuthData) {
             if(getRedditClient().isAuthenticated()) {
                 loginStatus = LOGGEDIN;
+                for(RedditAuthInterface redditAuthInterface : authListener) {
+                    redditAuthInterface.authChanged();
+                }
                 if(mContext instanceof LoginActivity) {
                     LoginActivity mc = (LoginActivity) mContext;
                     mc.signinSuccessful();
@@ -142,6 +151,7 @@ public class Authentication {
             mContext = context;
             mOAuthHelper = oAuthHelper;
             mCredentials = credentials;
+            LogUtil.d("Starting UserChallengeTask");
         }
 
         @Override
@@ -158,7 +168,7 @@ public class Authentication {
                     LogUtil.d("OAuthData is null");
                 }
                 return oAuthData;
-            } catch (OAuthException e) {
+            } catch (OAuthException | IllegalStateException e) {
                 e.printStackTrace();
             }
             return null;
@@ -169,13 +179,15 @@ public class Authentication {
             LogUtil.d("onPostExecute()");
 
             if (oAuthData != null) {
+                for(RedditAuthInterface redditAuthInterface : authListener) {
+                    redditAuthInterface.authChanged();
+                }
                 loginStatus = LOGGEDIN;
                 RedditClient rc = getRedditClient();
 
                 String refreshToken = rc.getOAuthData().getRefreshToken();
-                SharedPreferences.Editor editor = authentication.edit();
-                editor.putString(mContext.getString(R.string.reddit_refresh_token),refreshToken);
-                editor.commit();
+                getSharePref(mContext).edit().putString(mContext.getString(R.string.reddit_refresh_token),refreshToken);
+                getSharePref(mContext).edit().commit();
                 LogUtil.d("Refresh Token: " + refreshToken);
                 LogUtil.d("Username: " + rc.getAuthenticatedUser());
                 mContext.signinSuccessful();
@@ -193,9 +205,34 @@ public class Authentication {
     }
 
     public void signOut(Context context) {
-        authentication.edit().putString(context.getString(R.string.reddit_access_token), null);
-        authentication.edit().putString(context.getString(R.string.reddit_refresh_token), null);
-        authentication.edit().commit();
+        LogUtil.d("Signing out");
+        SharedPreferences.Editor sharedPreferences = getSharePref(context).edit();
+        sharedPreferences.remove(context.getString(R.string.reddit_access_token));
+        sharedPreferences.remove(context.getString(R.string.reddit_refresh_token));
+        sharedPreferences.apply();
         loginStatus = LOGGEDOUT;
+        for(RedditAuthInterface redditAuthInterface : authListener) {
+            redditAuthInterface.authChanged();
+        }
+    }
+
+    public void addAuthListener(@NonNull RedditAuthInterface rai){
+        if (authListener == null) {
+            authListener = new ArrayList<>();
+        }
+        if (!authListener.contains(rai)) {
+            authListener.add(rai);
+        }
+    }
+
+    public void removeAuthListener(@NonNull RedditAuthInterface rai){
+        if (authListener.contains(rai)) {
+            authListener.remove(rai);
+        }
+    }
+
+
+    public interface RedditAuthInterface {
+        void authChanged();
     }
 }
