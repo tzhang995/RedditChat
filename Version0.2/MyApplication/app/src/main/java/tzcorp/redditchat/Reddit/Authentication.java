@@ -268,8 +268,14 @@ public class Authentication {
     }
 
     public boolean doesSubredditExist(@NonNull String subreddit) {
-        Subreddit subreddit1 = noAuthReddit.getSubreddit(subreddit);
-        LogUtil.d(subreddit1 != null ? "Found subreddit": "Subreddit Does not exist");
-        return subreddit1 == null ? false : true;
+        try {
+            Subreddit subreddit1 = noAuthReddit.getSubreddit(subreddit);
+            LogUtil.d(subreddit1 != null ? "Found subreddit" : subreddit + " does not exist");
+            return subreddit1 == null ? false : true;
+        } catch (NetworkException e) {
+            LogUtil.d(subreddit + " not found");
+            e.printStackTrace();
+            return false;
+        }
     }
 }

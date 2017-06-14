@@ -99,14 +99,25 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
                         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
                             @Override
                             public void run() {
-                                String subreddit = getString(R.string.subreddit_schoolidolfestval);
-                                if (redditAuth.doesSubredditExist(subreddit)){
-                                    chatFragment.changeChannel(subreddit);
-                                }
+                                changeChannel(getString(R.string.subreddit_schoolidolfestval));
                             }
                         });
                         break;
                     case R.id.navigation_subreddt_all:
+                        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                changeChannel(getString(R.string.subreddit_all));
+                            }
+                        });
+                        break;
+                    case R.id.navigation_subreddit_uwaterloo:
+                        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                changeChannel(getString(R.string.subreddit_uwaterloo));
+                            }
+                        });
                         break;
                 }
                 mDrawerLayout.closeDrawers();
@@ -120,6 +131,12 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         fragmentManager.beginTransaction().add(R.id.content_frame, chatFragment).commit();
 
         redditAuth.addAuthListener(this);
+    }
+
+    public void changeChannel(@NonNull String subreddit) {
+        if (redditAuth.doesSubredditExist(subreddit) || subreddit.equals(getString(R.string.subreddit_all))){
+            chatFragment.changeChannel(subreddit);
+        }
     }
 
     @Override
