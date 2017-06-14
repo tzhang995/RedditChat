@@ -38,37 +38,9 @@ public class FBase {
 
     private FBase(){
         db = FirebaseDatabase.getInstance();
-        reference = FirebaseDatabase.getInstance().getReference().child("Robots");
         storage = FirebaseStorage.getInstance();
         listeners = new ArrayList<>();
-        childListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                LogUtil.d("New Message Received");
-                BasicMessage basicMessage = dataSnapshot.getValue(BasicMessage.class);
-                for(FBaseListener listener: listeners) {
-                    listener.newMessage(basicMessage);
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        reference.addChildEventListener(childListener);
+        changeChannel("All");
         loggedIn = false;
 
         auth = FirebaseAuth.getInstance();
@@ -147,5 +119,37 @@ public class FBase {
     public interface FBaseListener{
         void authchanged();
         void newMessage(BasicMessage message);
+    }
+
+    public void changeChannel(@NonNull String subreddit) {
+        reference = FirebaseDatabase.getInstance().getReference().child(subreddit);
+        childListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                LogUtil.d("New Message Received");
+                BasicMessage basicMessage = dataSnapshot.getValue(BasicMessage.class);
+                for(FBaseListener listener: listeners) {
+                    listener.newMessage(basicMessage);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        reference.addChildEventListener(childListener);
     }
 }

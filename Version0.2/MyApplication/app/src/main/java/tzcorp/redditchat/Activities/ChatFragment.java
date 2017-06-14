@@ -32,7 +32,7 @@ import tzcorp.redditchat.Util.LogUtil;
  * Created by tony on 05/06/17.
  */
 
-public class ChatFragment extends Fragment implements FBase.FBaseListener{
+public class ChatFragment extends Fragment implements FBase.FBaseListener, Authentication.RedditAuthInterface{
     public static final String TAG = "Chat_Fragment";
     public static final String ANONYMOUS = "anonymous";
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 145;
@@ -119,6 +119,7 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener{
                 }
             }
         });
+        redditAuth.addAuthListener(this);
     }
 
     @Override
@@ -139,5 +140,22 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener{
     public void newMessage(BasicMessage message) {
         LogUtil.d(message.getText());
         mMessageAdapter.add(message);
+    }
+
+    @Override
+    public void authChanged() {
+        if (redditAuth.getLoginStatus() != Authentication.LOGGEDIN) {
+            mUsername = ANONYMOUS;
+        }
+    }
+
+    public void changeChannel(@NonNull String subreddit) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mMessageAdapter.clear();
+            }
+        });
+        fBase.changeChannel(subreddit);
     }
 }

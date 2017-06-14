@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -94,6 +95,19 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
                     case R.id.navigation_signout:
                         redditAuth.signOut(getApplicationContext());
                         break;
+                    case R.id.navigation_subreddit_schoolidolfestval:
+                        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                String subreddit = getString(R.string.subreddit_schoolidolfestval);
+                                if (redditAuth.doesSubredditExist(subreddit)){
+                                    chatFragment.changeChannel(subreddit);
+                                }
+                            }
+                        });
+                        break;
+                    case R.id.navigation_subreddt_all:
+                        break;
                 }
                 mDrawerLayout.closeDrawers();
                 return false;
@@ -105,7 +119,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().add(R.id.content_frame, chatFragment).commit();
 
-
+        redditAuth.addAuthListener(this);
     }
 
     @Override
@@ -120,7 +134,6 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
     @Override
     protected void onResume() {
         super.onResume();
-        redditAuth.addAuthListener(this);
         if (redditAuth.getLoginStatus() == Authentication.LOGGEDOUT) {
             if (redditAuth.getRefreshToken(this) != null) {
                 redditAuth.startExistingLogin(this);
@@ -131,12 +144,6 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
             mNavigationView.getMenu().clear();
             mNavigationView.inflateMenu(R.menu.signout_menu);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        redditAuth.removeAuthListener(this);
     }
 
     @Override

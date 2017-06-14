@@ -15,8 +15,10 @@ import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthException;
 import net.dean.jraw.http.oauth.OAuthHelper;
+import net.dean.jraw.models.Subreddit;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import tzcorp.redditchat.Activities.LoginActivity;
 import tzcorp.redditchat.R;
@@ -32,8 +34,9 @@ public class Authentication {
     public static final String REDIRECT_URL = "http://www.example.com/my_redirect";
 
     private RedditClient reddit;
+    private RedditClient noAuthReddit;
 
-    private static int loginStatus;
+    private int loginStatus;
     public static int LOGGEDOUT = 0;
     public static int LOGGEDIN = 1;
     public static int CONNECTING = 2;
@@ -56,7 +59,17 @@ public class Authentication {
             reddit = new RedditClient(UserAgent.of("RedditChat"));
             reddit.setLoggingMode(LoggingMode.ALWAYS);
         }
+        if (noAuthReddit == null) {
+            noAuthReddit = new RedditClient(UserAgent.of("RedditChat"));
+            noAuthReddit.setLoggingMode(LoggingMode.ALWAYS);
+        }
         authListener = new ArrayList<>();
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                openAccess();
+            }
+        });
     }
 
     public SharedPreferences getSharePref(Context context) {
@@ -120,9 +133,6 @@ public class Authentication {
         protected void onPostExecute(OAuthData oAuthData) {
             if(getRedditClient().isAuthenticated()) {
                 loginStatus = LOGGEDIN;
-                for(RedditAuthInterface redditAuthInterface : authListener) {
-                    redditAuthInterface.authChanged();
-                }
                 if(mContext instanceof LoginActivity) {
                     LoginActivity mc = (LoginActivity) mContext;
                     mc.signinSuccessful();
@@ -130,6 +140,7 @@ public class Authentication {
             } else {
                 loginStatus = LOGGEDOUT;
             }
+            notifyListeners();
         }
     }
 
@@ -179,9 +190,6 @@ public class Authentication {
             LogUtil.d("onPostExecute()");
 
             if (oAuthData != null) {
-                for(RedditAuthInterface redditAuthInterface : authListener) {
-                    redditAuthInterface.authChanged();
-                }
                 loginStatus = LOGGEDIN;
                 RedditClient rc = getRedditClient();
 
@@ -197,6 +205,7 @@ public class Authentication {
                 LogUtil.d("OAuthData was null");
                 mContext.signinFailed();
             }
+            notifyListeners();
         }
     }
 
@@ -211,9 +220,13 @@ public class Authentication {
         sharedPreferences.remove(context.getString(R.string.reddit_refresh_token));
         sharedPreferences.apply();
         loginStatus = LOGGEDOUT;
-        for(RedditAuthInterface redditAuthInterface : authListener) {
-            redditAuthInterface.authChanged();
-        }
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                reddit.getOAuthHelper().revokeAccessToken(Credentials.installedApp(CLIENT_ID, REDIRECT_URL));
+            }
+        });
+        notifyListeners();
     }
 
     public void addAuthListener(@NonNull RedditAuthInterface rai){
@@ -234,5 +247,29 @@ public class Authentication {
 
     public interface RedditAuthInterface {
         void authChanged();
+    }
+
+    private void notifyListeners() {
+        for(RedditAuthInterface redditAuthInterface : authListener) {
+            redditAuthInterface.authChanged();
+        }
+    }
+
+    public void openAccess() {
+        try {
+            Credentials cred = Credentials.userlessApp(CLIENT_ID, UUID.randomUUID());
+            OAuthHelper oAuthHelper = noAuthReddit.getOAuthHelper();
+            OAuthData authData = oAuthHelper.easyAuth(cred);
+            noAuthReddit.authenticate(authData);
+
+        } catch (OAuthException | IllegalStateException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean doesSubredditExist(@NonNull String subreddit) {
+        Subreddit subreddit1 = noAuthReddit.getSubreddit(subreddit);
+        LogUtil.d(subreddit1 != null ? "Found subreddit": "Subreddit Does not exist");
+        return subreddit1 == null ? false : true;
     }
 }
