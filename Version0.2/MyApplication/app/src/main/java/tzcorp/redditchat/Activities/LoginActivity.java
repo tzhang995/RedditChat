@@ -25,12 +25,13 @@ import tzcorp.redditchat.Util.LogUtil;
  */
 
 public class LoginActivity extends AppCompatActivity {
-    private Authentication authentication = Authentication.getInstance(this);
+    private Authentication authentication;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        authentication = Authentication.getInstance(this);
         setContentView(R.layout.activity_login);
 
         final Activity activity = this;

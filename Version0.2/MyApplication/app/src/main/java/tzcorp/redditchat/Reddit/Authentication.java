@@ -54,7 +54,7 @@ public class Authentication {
     }
 
 
-    private Authentication(Context context) {
+    private Authentication(final Context context) {
         if (reddit == null) {
             reddit = new RedditClient(UserAgent.of("RedditChat"));
             reddit.setLoggingMode(LoggingMode.ALWAYS);
@@ -67,6 +67,13 @@ public class Authentication {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
+                while (!NetworkUtil.isConnected(context)) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 openAccess();
             }
         });

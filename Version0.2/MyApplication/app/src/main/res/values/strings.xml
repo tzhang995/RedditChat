@@ -31,4 +31,11 @@
     <string name="subreddit_uoft">UofT</string>
     <string name="subreddit_schoolidolfestval">SchoolIdolFestival</string>
 
+    <!--Toolbar Menu-->
+    <string name="action_search">Search Button</string>
+    <string name="search_hint">Subreddit</string>
+
+    <!--Dialog-->
+    <string name="dialog_error">Error</string>
+
 </resources>

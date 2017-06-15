@@ -37,7 +37,7 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener, Authe
     public static final String ANONYMOUS = "anonymous";
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 145;
 
-    private Authentication redditAuth = Authentication.getInstance(this.getActivity());
+    private Authentication redditAuth;
 
     //Firebase stuff
     private FBase fBase = FBase.getInstance();
@@ -51,6 +51,7 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener, Authe
     private MessageAdapter mMessageAdapter;
 
     public ChatFragment() {
+        redditAuth = Authentication.getInstance(this.getActivity());
     }
 
     @Nullable
