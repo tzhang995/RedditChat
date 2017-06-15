@@ -37,6 +37,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ChatFragment chatFragment;
+    private Toolbar myToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         redditAuth = Authentication.getInstance(this);
         setContentView(R.layout.activity_chat);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
 
@@ -87,28 +88,13 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
                         redditAuth.signOut(getApplicationContext());
                         break;
                     case R.id.navigation_subreddit_schoolidolfestval:
-                        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                changeChannel(getString(R.string.subreddit_schoolidolfestval));
-                            }
-                        });
+                        changeChannel(getString(R.string.subreddit_schoolidolfestval));
                         break;
                     case R.id.navigation_subreddt_all:
-                        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                changeChannel(getString(R.string.subreddit_all));
-                            }
-                        });
+                        changeChannel(getString(R.string.subreddit_all));
                         break;
                     case R.id.navigation_subreddit_uwaterloo:
-                        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                changeChannel(getString(R.string.subreddit_uwaterloo));
-                            }
-                        });
+                        changeChannel(getString(R.string.subreddit_uwaterloo));
                         break;
                 }
                 mDrawerLayout.closeDrawers();
@@ -125,15 +111,31 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
 
-        SearchManager searchManager =
+        final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView =
+                (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                LogUtil.d("Search query: " + query);
+                changeChannel(query);
+                searchItem.collapseActionView();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         return true;
     }
@@ -149,9 +151,33 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         }
     }
 
-    public void changeChannel(@NonNull String subreddit) {
-        if (redditAuth.doesSubredditExist(subreddit) || subreddit.equals(getString(R.string.subreddit_all))){
-            chatFragment.changeChannel(subreddit);
+    public void changeChannel(@NonNull final String subreddit) {
+        ChangeChannelAsyncTask cc = new ChangeChannelAsyncTask(subreddit);
+        cc.execute();
+    }
+
+    public class ChangeChannelAsyncTask extends AsyncTask<Void,Void,Boolean>{
+        private String subreddit;
+        public ChangeChannelAsyncTask(final String subR) {
+            super();
+            subreddit = subR;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aVoid) {
+            super.onPostExecute(aVoid);
+            if (aVoid) {
+                myToolbar.setTitle(subreddit);
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            if (redditAuth.doesSubredditExist(subreddit) || subreddit.equals(getString(R.string.subreddit_all))){
+                chatFragment.changeChannel(subreddit);
+                return true;
+            }
+            return false;
         }
     }
 
