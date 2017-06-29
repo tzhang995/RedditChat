@@ -1,5 +1,5 @@
 <resources>
-    <string name="my_app_name">RedditChat</string>
+    <string name="my_app_name">SnooChat</string>
     <string name="sign_out">Sign Out</string>
     <string name="send_button_label">Send</string>
     <string-array name="drawer_items">
@@ -25,7 +25,7 @@
     <string name="navigation_settings">Settings</string>
 
     <!--Default Subreddits-->
-    <string name="subreddit_all">All</string>
+    <string name="subreddit_all">ALL</string>
     <string name="subreddit_popular">Popular</string>
     <string name="subreddit_uwaterloo">UWaterloo</string>
     <string name="subreddit_uoft">UofT</string>

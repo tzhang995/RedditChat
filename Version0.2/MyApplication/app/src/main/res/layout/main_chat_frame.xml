@@ -26,11 +26,11 @@
         android:focusableInTouchMode="true"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/messagePhotoPickerButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@android:drawable/ic_menu_gallery" />
+        <!--<ImageButton-->
+            <!--android:id="@+id/messagePhotoPickerButton"-->
+            <!--android:layout_width="36dp"-->
+            <!--android:layout_height="36dp"-->
+            <!--android:background="@android:drawable/ic_menu_gallery" />-->
 
         <EditText
             android:id="@+id/messageEditText"

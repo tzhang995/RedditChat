@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "371389028658",
-    "firebase_url": "https://redditchat-66770.firebaseio.com",
-    "project_id": "redditchat-66770",
-    "storage_bucket": "redditchat-66770.appspot.com"
+    "project_number": "521913760604",
+    "firebase_url": "https://snoochat-e588c.firebaseio.com",
+    "project_id": "snoochat-e588c",
+    "storage_bucket": "snoochat-e588c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:371389028658:android:1ff680e90ef3151f",
+        "mobilesdk_app_id": "1:521913760604:android:0e11f949a96c2608",
         "android_client_info": {
-          "package_name": "tzcorp.redditchat"
+          "package_name": "tzcorp.snoochat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "371389028658-pqpe3qb89l0km0ljne8649inouqko91j.apps.googleusercontent.com",
+          "client_id": "521913760604-l50prujof8cg95gmnu8ae6g270cfk606.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "tzcorp.redditchat",
+            "package_name": "tzcorp.snoochat",
             "certificate_hash": "db62afe6a25517264d727c2fcd1478eddebe898c"
           }
         },
         {
-          "client_id": "371389028658-vad2de9blrks59p17s1h9s82ngqrgqb8.apps.googleusercontent.com",
+          "client_id": "521913760604-skmpda0tk82r27gsjq0hlk941al95eno.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBE9sFjJ40CvFnX7EBwFv6cA2wNwf1RSbM"
+          "current_key": "AIzaSyBQafqUAIr55My_4rzS3Sh0UjIn3Wioqyw"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "371389028658-vad2de9blrks59p17s1h9s82ngqrgqb8.apps.googleusercontent.com",
+              "client_id": "521913760604-skmpda0tk82r27gsjq0hlk941al95eno.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
