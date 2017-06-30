@@ -15,18 +15,18 @@
         <activity android:name="tzcorp.snoochat.Activities.ChatActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <!--TODO Need to Change for full release-->
-                <data android:scheme="http"
-                    android:host="www.example.com"
-                    android:pathPrefix="/SnooChat" />
-                <data android:scheme="example"
-                    android:host="SnooChat" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!--&lt;!&ndash;TODO Need to Change for full release&ndash;&gt;-->
+                <!--<data android:scheme="http"-->
+                    <!--android:host="www.example.com"-->
+                    <!--android:pathPrefix="/SnooChat" />-->
+                <!--<data android:scheme="example"-->
+                    <!--android:host="SnooChat" />-->
             </intent-filter>
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
