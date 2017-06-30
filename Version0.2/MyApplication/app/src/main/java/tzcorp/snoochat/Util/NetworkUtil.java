@@ -22,23 +22,23 @@ public class NetworkUtil extends Activity {
                 activeNetwork.isConnected() && activeNetwork.isAvailable();
     }
 
-    public static boolean isInternetAccessible(Context context) {
-        if (isConnected(context)) {
-            try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.facebook.com").openConnection());
-                urlc.setRequestProperty("User-Agent", "Test");
-                urlc.setRequestProperty("Connection", "close");
-                urlc.setConnectTimeout(1500);
-                urlc.connect();
-                boolean retval =urlc.getResponseCode() == 200;
-                urlc.disconnect();
-                return retval;
-            } catch (IOException e) {
-                LogUtil.d("Couldn't check internet connection");
-            }
-        } else {
-            LogUtil.d("Internet not available!");
-        }
-        return false;
-    }
+//    public static boolean isInternetAccessible(Context context) {
+//        if (isConnected(context)) {
+//            try {
+//                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.facebook.com").openConnection());
+//                urlc.setRequestProperty("User-Agent", "Test");
+//                urlc.setRequestProperty("Connection", "close");
+//                urlc.setConnectTimeout(1500);
+//                urlc.connect();
+//                boolean retval =urlc.getResponseCode() == 200;
+//                urlc.disconnect();
+//                return retval;
+//            } catch (IOException e) {
+//                LogUtil.d("Couldn't check internet connection");
+//            }
+//        } else {
+//            LogUtil.d("Internet not available!");
+//        }
+//        return false;
+//    }
 }

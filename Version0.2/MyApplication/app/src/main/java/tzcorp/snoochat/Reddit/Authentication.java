@@ -66,7 +66,7 @@ public class Authentication {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
-                while (!NetworkUtil.isInternetAccessible(context)) {
+                while (!NetworkUtil.isConnected(context)) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -95,7 +95,7 @@ public class Authentication {
     }
 
     public void startExistingLogin(Context context){
-        if (NetworkUtil.isInternetAccessible(context)) {
+        if (NetworkUtil.isConnected(context)) {
             new TokenRefreshTask(context).execute();
         } else {
             //TODO
@@ -151,7 +151,7 @@ public class Authentication {
     }
 
     public void startNewLogin(LoginActivity context, OAuthHelper oAuthHelper, Credentials credentials, String URL) {
-        if (NetworkUtil.isInternetAccessible(context)) {
+        if (NetworkUtil.isConnected(context)) {
             new UserChallengeTask(context, oAuthHelper, credentials).execute(URL);
         } else {
             //TODO
