@@ -39,6 +39,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ChatFragment chatFragment;
+    private NoConnectionFragment noConnectionFragment;
     private Toolbar myToolbar;
 
     @Override
@@ -104,6 +105,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         });
 
         chatFragment = new ChatFragment();
+        noConnectionFragment = new NoConnectionFragment();
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().add(R.id.content_frame, chatFragment).commit();
@@ -220,6 +222,13 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         } else if (redditAuth.getLoginStatus() == Authentication.LOGGEDIN) {
             mNavigationView.getMenu().clear();
             mNavigationView.inflateMenu(R.menu.signout_menu);
+        }
+        if (redditAuth.getLoginStatus() == Authentication.NO_CONNECTION) {
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, noConnectionFragment).commit();
+        } else {
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, chatFragment).commit();
         }
     }
 }

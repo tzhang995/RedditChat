@@ -38,4 +38,8 @@
     <!--Dialog-->
     <string name="dialog_error">Error</string>
 
+    <!--Internet connection-->
+    <string name="no_connection">Please check your network\nconnection</string>
+    <string name="retry">Retry</string>
+
 </resources>

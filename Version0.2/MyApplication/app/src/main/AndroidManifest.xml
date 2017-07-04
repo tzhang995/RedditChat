@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tzcorp.snoochat">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application
@@ -20,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
                 <!--&lt;!&ndash;TODO Need to Change for full release&ndash;&gt;-->
                 <!--<data android:scheme="http"-->
                     <!--android:host="www.example.com"-->

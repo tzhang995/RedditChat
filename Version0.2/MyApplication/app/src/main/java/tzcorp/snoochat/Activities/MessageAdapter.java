@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import tzcorp.snoochat.R;
@@ -19,8 +20,11 @@ import tzcorp.snoochat.R;
  */
 
 public class MessageAdapter extends ArrayAdapter<BasicMessage> {
+    public ArrayList<MessageAdapterListeners> listeners;
+
     public MessageAdapter(Context context, int resource, List<BasicMessage> messages){
         super(context, resource, messages);
+        listeners = new ArrayList<>();
     }
 
     @NonNull
@@ -42,5 +46,29 @@ public class MessageAdapter extends ArrayAdapter<BasicMessage> {
 
         nameTextView.setText(message.getName());
         return convertView;
+    }
+
+    public void addListeners(@NonNull MessageAdapterListeners listener) {
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListeners(@NonNull MessageAdapterListeners listener) {
+        if (listeners.contains(listener)){
+            listeners.remove(listener);
+        }
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        for(MessageAdapterListeners listener : listeners) {
+            listener.messagesChanged();
+        }
+    }
+
+    public interface MessageAdapterListeners{
+        void messagesChanged();
     }
 }

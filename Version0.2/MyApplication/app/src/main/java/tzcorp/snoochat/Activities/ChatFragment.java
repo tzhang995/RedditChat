@@ -32,7 +32,8 @@ import tzcorp.snoochat.Util.LogUtil;
  * Created by tony on 05/06/17.
  */
 
-public class ChatFragment extends Fragment implements FBase.FBaseListener, Authentication.RedditAuthInterface{
+public class ChatFragment extends Fragment implements FBase.FBaseListener, Authentication.RedditAuthInterface,
+        MessageAdapter.MessageAdapterListeners{
     public static final String TAG = "Chat_Fragment";
     public static final String ANONYMOUS = "anonymous";
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 145;
@@ -120,6 +121,9 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener, Authe
                 }
             }
         });
+
+        mMessageAdapter.addListeners(this);
+
         redditAuth.addAuthListener(this);
     }
 
@@ -158,5 +162,14 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener, Authe
             }
         });
         fBase.changeChannel(subreddit);
+    }
+
+    @Override
+    public void messagesChanged() {
+        if (mMessageAdapter.getCount() == 0 && redditAuth.getLoginStatus() == Authentication.CONNECTING) {
+            mProgressbar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressbar.setVisibility(View.INVISIBLE);
+        }
     }
 }

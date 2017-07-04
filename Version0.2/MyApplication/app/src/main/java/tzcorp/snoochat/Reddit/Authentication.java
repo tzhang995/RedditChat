@@ -39,6 +39,7 @@ public class Authentication {
     public static int LOGGEDOUT = 0;
     public static int LOGGEDIN = 1;
     public static int CONNECTING = 2;
+    public static int NO_CONNECTION = 3;
 
     private static Authentication instance;
     private ArrayList<RedditAuthInterface> authListener;
@@ -63,19 +64,7 @@ public class Authentication {
             noAuthReddit.setLoggingMode(LoggingMode.ALWAYS);
         }
         authListener = new ArrayList<>();
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                while (!NetworkUtil.isConnected(context)) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                openAccess();
-            }
-        });
+        tryConnecting();
     }
 
     public SharedPreferences getSharePref(Context context) {
@@ -261,15 +250,43 @@ public class Authentication {
         }
     }
 
+    public void tryConnecting() {
+        ConnectToRedditAsyncTask  connectToReddit = new ConnectToRedditAsyncTask();
+        connectToReddit.execute();
+    }
+
+    public class ConnectToRedditAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Thread.sleep(1000);
+                openAccess();
+            } catch (Exception e) {
+                e.printStackTrace();
+                loginStatus = NO_CONNECTION;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            notifyListeners();
+        }
+    }
+
+
     public void openAccess() {
         try {
+            loginStatus = CONNECTING;
             Credentials cred = Credentials.userlessApp(CLIENT_ID, UUID.randomUUID());
             OAuthHelper oAuthHelper = noAuthReddit.getOAuthHelper();
             OAuthData authData = oAuthHelper.easyAuth(cred);
             noAuthReddit.authenticate(authData);
-
+            loginStatus = LOGGEDOUT;
         } catch (OAuthException | IllegalStateException e) {
             e.printStackTrace();
+            loginStatus = NO_CONNECTION;
         }
     }
 
