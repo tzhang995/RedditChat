@@ -1,5 +1,6 @@
 package tzcorp.snoochat.Reddit;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import tzcorp.snoochat.Activities.LoginActivity;
+import tzcorp.snoochat.Dialogs.BasicDialogFragment;
 import tzcorp.snoochat.R;
 import tzcorp.snoochat.Util.LogUtil;
 import tzcorp.snoochat.Util.NetworkUtil;

@@ -1,5 +1,6 @@
 package tzcorp.snoochat.Activities;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import net.dean.jraw.RedditClient;
 import java.util.ArrayList;
 import java.util.List;
 
+import tzcorp.snoochat.Dialogs.BasicDialogFragment;
 import tzcorp.snoochat.Firebase.FBase;
 import tzcorp.snoochat.R;
 import tzcorp.snoochat.Reddit.Authentication;

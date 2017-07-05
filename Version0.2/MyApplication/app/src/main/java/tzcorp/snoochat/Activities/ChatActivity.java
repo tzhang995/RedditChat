@@ -1,5 +1,6 @@
 package tzcorp.snoochat.Activities;
 
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.view.View;
 
 import net.dean.jraw.models.Subreddit;
 
+import tzcorp.snoochat.Dialogs.BasicDialogFragment;
 import tzcorp.snoochat.R;
 import tzcorp.snoochat.Reddit.Authentication;
 import tzcorp.snoochat.Util.LogUtil;
@@ -226,6 +228,9 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         if (redditAuth.getLoginStatus() == Authentication.NO_CONNECTION) {
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, noConnectionFragment).commit();
+            DialogFragment frag = BasicDialogFragment.newInstance(R.string.no_connection);
+            frag.show(getFragmentManager(),"dialog");
+
         } else {
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.content_frame, chatFragment).commit();
