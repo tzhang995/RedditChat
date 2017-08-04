@@ -3,10 +3,19 @@
     <item
         android:id="@+id/navigation_signout"
         android:title="@string/navigation_signout" />
-    <item
-        android:id="@+id/navigation_settings"
-        android:title="@string/navigation_settings" />
-    <item
-        android:id="@+id/navigation_about"
-        android:title="@string/navigation_about" />
+    <!--<item-->
+        <!--android:id="@+id/navigation_settings"-->
+        <!--android:title="@string/navigation_settings" />-->
+    <!--<item-->
+        <!--android:id="@+id/navigation_about"-->
+        <!--android:title="@string/navigation_about" />-->
+    <group android:id="@+id/group_subreddits"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_subreddt_all"
+            android:title="@string/subreddit_all" />
+        <item
+            android:id="@+id/navigation_add_channels"
+            android:title="@string/navigation_add_channels" />
+    </group>
 </menu>

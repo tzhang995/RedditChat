@@ -122,6 +122,9 @@ public class FBase {
     }
 
     public void changeChannel(@NonNull String subreddit) {
+        if (childListener != null && reference != null) {
+            reference.removeEventListener(childListener);
+        }
         reference = FirebaseDatabase.getInstance().getReference().child(subreddit);
         childListener = new ChildEventListener() {
             @Override

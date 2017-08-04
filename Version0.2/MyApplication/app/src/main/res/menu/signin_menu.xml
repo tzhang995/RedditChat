@@ -5,12 +5,12 @@
         <item
             android:id="@+id/navigation_signin"
             android:title="@string/navigation_signin" />
-        <item
-            android:id="@+id/navigation_settings"
-            android:title="@string/navigation_settings" />
-        <item
-            android:id="@+id/navigation_about"
-            android:title="@string/navigation_about" />
+        <!--<item-->
+            <!--android:id="@+id/navigation_settings"-->
+            <!--android:title="@string/navigation_settings" />-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_about"-->
+            <!--android:title="@string/navigation_about" />-->
     </group>
     <group android:id="@+id/group_subreddits"
         android:checkableBehavior="single">
@@ -18,10 +18,7 @@
             android:id="@+id/navigation_subreddt_all"
             android:title="@string/subreddit_all" />
         <item
-            android:id="@+id/navigation_subreddit_uwaterloo"
-            android:title="@string/subreddit_uwaterloo" />
-        <item
-            android:id="@+id/navigation_subreddit_schoolidolfestval"
-            android:title="@string/subreddit_schoolidolfestval" />
+            android:id="@+id/navigation_add_channels"
+            android:title="@string/navigation_add_channels" />
     </group>
 </menu>

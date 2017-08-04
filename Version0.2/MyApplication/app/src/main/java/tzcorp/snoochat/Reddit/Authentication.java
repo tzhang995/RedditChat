@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import tzcorp.snoochat.Activities.LoginActivity;
-import tzcorp.snoochat.Dialogs.BasicDialogFragment;
 import tzcorp.snoochat.R;
 import tzcorp.snoochat.Util.LogUtil;
 import tzcorp.snoochat.Util.NetworkUtil;
@@ -220,7 +219,11 @@ public class Authentication {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
-                reddit.getOAuthHelper().revokeAccessToken(Credentials.installedApp(CLIENT_ID, REDIRECT_URL));
+                try {
+                    reddit.getOAuthHelper().revokeAccessToken(Credentials.installedApp(CLIENT_ID, REDIRECT_URL));
+                } catch (NetworkException e) {
+                    LogUtil.d("Network is not working");
+                }
             }
         });
         notifyListeners();
@@ -298,7 +301,7 @@ public class Authentication {
             Subreddit subreddit1 = noAuthReddit.getSubreddit(subreddit);
             LogUtil.d(subreddit1 != null ? "Found subreddit" : subreddit + " does not exist");
             return subreddit1;
-        } catch (NetworkException e) {
+        } catch (NetworkException | IllegalArgumentException e) {
             LogUtil.d(subreddit + " not found");
             e.printStackTrace();
             return null;
