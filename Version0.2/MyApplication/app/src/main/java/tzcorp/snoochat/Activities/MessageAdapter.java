@@ -10,8 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import tzcorp.snoochat.R;
 
@@ -44,7 +49,20 @@ public class MessageAdapter extends ArrayAdapter<BasicMessage> {
         photoImageView.setVisibility(View.GONE);
         messageTextView.setText(message.getText());
 
-        nameTextView.setText(message.getName());
+
+        Calendar cal = Calendar.getInstance();
+        TimeZone tz = cal.getTimeZone();
+        SimpleDateFormat date = new SimpleDateFormat("HH:mm");
+        date.setTimeZone(tz);
+        if (message.getUtcTime() != null) {
+            String curTime = date.format(new Date(message.getUtcTime()));
+            nameTextView.setText(message.getName()+ " " + curTime);
+        } else {
+            nameTextView.setText(message.getName());
+        }
+
+
+
         return convertView;
     }
 

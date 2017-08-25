@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class FBase {
     public FirebaseAuth auth;
     public FirebaseAuth.AuthStateListener stateListener;
 
+    public DatabaseReference presenceReference;
+    public ChildEventListener presenceListener;
+
     private FBase(){
         db = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -58,6 +62,83 @@ public class FBase {
             }
         };
         auth.addAuthStateListener(stateListener);
+
+        presenceReference = db.getReference("all/connections");
+        final DatabaseReference connectedRef = db.getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    DatabaseReference con = presenceReference.push();
+
+                    // when this device disconnects, remove it
+                    con.onDisconnect().removeValue();
+
+                    // add this device to my connections list
+                    // this value could contain info about the device or a timestamp too
+                    con.setValue(Boolean.TRUE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.err.println("Listener was cancelled at .info/connected");
+            }
+        });
+
+        presenceListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                presenceReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(FBaseListener listener: listeners) {
+                            listener.presenceChange(dataSnapshot.getChildrenCount());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                presenceReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(FBaseListener listener: listeners) {
+                            listener.presenceChange(dataSnapshot.getChildrenCount());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        presenceReference.addChildEventListener(presenceListener);
     }
 
 
@@ -119,6 +200,7 @@ public class FBase {
     public interface FBaseListener{
         void authchanged();
         void newMessage(BasicMessage message);
+        void presenceChange(long people);
     }
 
     public void changeChannel(@NonNull String subreddit) {

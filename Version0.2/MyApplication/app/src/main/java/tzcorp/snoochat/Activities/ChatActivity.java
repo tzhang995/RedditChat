@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import tzcorp.snoochat.Dialogs.BasicDialogFragment;
 import tzcorp.snoochat.Dialogs.GetTextDialogFragment;
+import tzcorp.snoochat.Firebase.FBase;
 import tzcorp.snoochat.R;
 import tzcorp.snoochat.Reddit.Authentication;
 import tzcorp.snoochat.Util.LogUtil;
@@ -38,9 +39,10 @@ import tzcorp.snoochat.Util.NetworkUtil;
  * Created by tony on 05/06/17.
  */
 
-public class ChatActivity extends AppCompatActivity implements Authentication.RedditAuthInterface {
+public class ChatActivity extends AppCompatActivity implements Authentication.RedditAuthInterface, FBase.FBaseListener {
     public static final int REQUEST_CODE_SIGN_IN = 8001;
 
+    private FBase fBase = FBase.getInstance();
     private Authentication redditAuth;
 
     //Layout stuff
@@ -57,6 +59,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
     private ArrayList<String> mMenuArray;
 
     //SharedPreferences to add channels to toolbar
+    MenuItem presenceCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +140,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
+        presenceCount = menu.findItem(R.id.action_presence_textview);
         final SearchView searchView =
                 (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(
@@ -171,6 +175,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
         }
         spe.putString("menu", stringBuilder.toString());
         spe.commit();
+        fBase.removeFBaseListener(this);
     }
 
     @Override
@@ -187,6 +192,23 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
     public void changeChannel(@NonNull final String subreddit) {
         ChangeChannelAsyncTask cc = new ChangeChannelAsyncTask(subreddit);
         cc.execute();
+    }
+
+    @Override
+    public void authchanged() {
+
+    }
+
+    @Override
+    public void newMessage(BasicMessage message) {
+
+    }
+
+    @Override
+    public void presenceChange(long people) {
+        if (presenceCount != null) {
+            presenceCount.setTitle(getString(R.string.num_people_online, Long.toString(people)));
+        }
     }
 
     public class ChangeChannelAsyncTask extends AsyncTask<Void,Void,Boolean>{
@@ -249,7 +271,7 @@ public class ChatActivity extends AppCompatActivity implements Authentication.Re
             inflateMenu(R.menu.signout_menu);
         }
 
-
+        fBase.addFBaseListeners(this);
     }
 
     @Override

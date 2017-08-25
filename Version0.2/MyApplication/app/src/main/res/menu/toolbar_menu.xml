@@ -5,7 +5,12 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/action_search"
-        app:showAsAction="collapseActionView|ifRoom"
+        app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
+    <item
+        android:id="@+id/action_presence_textview"
+        android:title="If you are seeing this, something is wrong"
+        android:actionLayout="@layout/textview_layout"
+        app:showAsAction="never"/>
 
 </menu>

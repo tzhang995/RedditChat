@@ -31,8 +31,10 @@
     <string name="subreddit_all">ALL</string>
 
     <!--Toolbar Menu-->
+    <string name="action_presence">Presence</string>
     <string name="action_search">Search Button</string>
     <string name="search_hint">Subreddit</string>
+    <string name="num_people_online">%1$s online</string>
 
     <!--Dialog-->
     <string name="dialog_error">Error</string>

@@ -19,8 +19,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import net.dean.jraw.RedditClient;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import tzcorp.snoochat.Firebase.FBase;
 import tzcorp.snoochat.R;
@@ -113,7 +116,11 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener, Authe
                     if (rc.isAuthenticated()) {
                         mUsername = rc.getAuthenticatedUser();
                     }
-                    BasicMessage basicMessage = new BasicMessage(mMessageEditText.getText().toString(), mUsername, null);
+
+                    SimpleDateFormat df = new SimpleDateFormat("E, d MMM y H:m:s z");
+                    df.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    String gmtTime = df.format(new Date());
+                    BasicMessage basicMessage = new BasicMessage(mMessageEditText.getText().toString(), mUsername, gmtTime);
                     fBase.addMessage(basicMessage);
                     // Clear input box
                     mMessageEditText.setText("");
@@ -145,6 +152,11 @@ public class ChatFragment extends Fragment implements FBase.FBaseListener, Authe
     public void newMessage(BasicMessage message) {
         LogUtil.d(message.getText());
         mMessageAdapter.add(message);
+    }
+
+    @Override
+    public void presenceChange(long people) {
+
     }
 
     @Override

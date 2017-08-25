@@ -7,14 +7,14 @@ package tzcorp.snoochat.Activities;
 public class BasicMessage {
     private String text;
     private String name;
-    private String photoUrl;
+    private String utcTime;
 
     public BasicMessage(){}
 
-    public BasicMessage(final String text, final String name, final String photoUrl){
+    public BasicMessage(final String text, final String name, final String utcTime){
         this.name = name;
         this.text = text;
-        this.photoUrl = photoUrl;
+        this.utcTime = utcTime;
     }
 
     public String getText() {
@@ -33,11 +33,11 @@ public class BasicMessage {
         this.name = name;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getUtcTime() {
+        return utcTime;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setUtcTime(String utcTime) {
+        this.utcTime = utcTime;
     }
 }
